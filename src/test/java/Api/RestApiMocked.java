@@ -4,6 +4,7 @@ import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import static io.restassured.RestAssured.*;
 
@@ -108,5 +109,36 @@ public class RestApiMocked {
                 .then()
                 .log().all()
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
+    }
+
+    // HW-10
+    @Tag("HW-10")
+    @DisplayName("sending Get request with login and password to receive Api Key")
+    @ParameterizedTest
+    @CsvSource({"usr, Password",
+            "User12 345678, Password002",
+            "User1, Password003",
+            "User, Password004",
+            "Usr, Password005",
+            "User006, Password006",
+            "User007, Password123456789012"})
+    public void requestGetWithUsernameAndPasswordToReceiveApiKey(String username, String password) {
+        String responseString =
+                given()
+                        .queryParam("username", username)
+                        .queryParam("password", password)
+                        .log().all()
+                        .when()
+                        .get("/test-orders/")
+                        .then()
+                        .log().all()
+                        .statusCode(HttpStatus.SC_OK)
+                        .extract()
+                        .path("apiKey");
+        Assertions.assertTrue(responseString.length() == 16);
+        Assertions.assertTrue(username.length() >= 3);
+        Assertions.assertTrue(username.length() <= 13);
+        Assertions.assertTrue(password.length() >= 8);
+        Assertions.assertTrue(password.length() <= 20);
     }
 }
