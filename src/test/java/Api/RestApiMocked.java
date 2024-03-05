@@ -1,6 +1,7 @@
 package Api;
 
 import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -20,7 +21,7 @@ public class RestApiMocked {
         get("test-orders/" + orderId)
                 .then()
                 .log().all()
-                .statusCode(200);
+                .statusCode(HttpStatus.SC_OK);
     }
     @DisplayName("Get order by invalid ID and check that response code 400 and had Bad request")
     @Test
@@ -30,12 +31,12 @@ public class RestApiMocked {
                 .when()
                 .get("/test-orders/11")
                 .then()
-                .statusCode(400)
+                .statusCode(HttpStatus.SC_BAD_REQUEST)
                 .log().all();
     }
-    @DisplayName("Deletion of existing valid order ID")
+    @DisplayName("Deletion of existing valid order ID gives response No content and status OK")
     @Test
-    public void deletionOfExistingValidOrderId(){
+    public void deletionOfExistingValidOrderIdGivesResponseNotContentStatusOK(){
         given()
                 .log().all()
                 .contentType(ContentType.JSON)
@@ -44,12 +45,12 @@ public class RestApiMocked {
                 .delete("/test-orders/10")
                 .then()
                 .log().all()
-                .statusCode(204);
+                .statusCode(HttpStatus.SC_NO_CONTENT);
 
     }
-    @DisplayName("Deletion of invalid order ID")
+    @DisplayName("Deletion of invalid order ID gives response Bad request and code 400")
     @Test
-    public void deleteInvalidOrderId(){
+    public void deleteInvalidOrderIdGivesResponseBadRequest(){
         given()
                 .log().all()
                 .when()
@@ -57,11 +58,11 @@ public class RestApiMocked {
                 .delete("/test-orders/12")
                 .then()
                 .log().all()
-                .statusCode(400);
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
-    @DisplayName("Deletion order with empty ID field")
+    @DisplayName("Deletion order with empty ID field gives response method not allowed")
     @Test
-    public void deletionOrderWithEmptyIdField(){
+    public void deletionOrderWithEmptyIdFieldGivesResponseNotAllowed(){
         given()
                 .log().all()
                 .when()
@@ -69,11 +70,11 @@ public class RestApiMocked {
                 .delete("/test-orders/ ")
                 .then()
                 .log().all()
-                .statusCode(405);
+                .statusCode(HttpStatus.SC_METHOD_NOT_ALLOWED);
     }
     @DisplayName("Deletion with wrong api key value")
     @Test
-    public void deletionOfValidIdWithInvalidApiKey(){
+    public void deletionOfValidIdWithInvalidApiKeyGivesResponseNotAuthorized(){
         given()
                 .log().all()
                 .when()
@@ -81,11 +82,11 @@ public class RestApiMocked {
                 .delete("/test-orders/8")
                 .then()
                 .log().all()
-                .statusCode(401);
+                .statusCode(HttpStatus.SC_UNAUTHORIZED);
     }
-    @DisplayName("Deleting order with zero ID")
+    @DisplayName("Deleting order with zero I gives response Bad Request and code 400")
     @Test
-    public void deletionOfOrderWithZeroId() {
+    public void deletionOfOrderWithZeroIdGivesResponseBadRequest() {
 
         given()
                 .log().all()
@@ -94,11 +95,11 @@ public class RestApiMocked {
                 .delete("/test-orders/0")
                 .then()
                 .log().all()
-                .statusCode(400);
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
-    @DisplayName("Deletion order with character ID instead of digits")
+    @DisplayName("Deletion order with character ID instead of digits gives response Bad request and code 400")
     @Test
-    public void deleteOrderUsingCharacterInsteadOfDigits(){
+    public void deleteOrderUsingCharacterInsteadOfDigitsGivesResponseBadRequest(){
         given()
                 .log().all()
                 .when()
@@ -106,6 +107,6 @@ public class RestApiMocked {
                 .delete("/test-orders/Q")
                 .then()
                 .log().all()
-                .statusCode(400);
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 }
