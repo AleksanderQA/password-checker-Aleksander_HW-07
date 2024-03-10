@@ -11,6 +11,7 @@ public class OrderDtoMocked {
 
 
 
+
     public OrderDtoMocked(String status, int courierId, String customerName, String customerPhone, String comment, int id) {
         this.status = status;
         this.courierId = courierId;
@@ -23,6 +24,7 @@ public class OrderDtoMocked {
 
 
     public  OrderDtoMocked( ) {
+
 
     }
 
@@ -42,7 +44,9 @@ public class OrderDtoMocked {
         this.customerPhone = customerPhone;
     }
 
+
     public void setComment(String comment) {
+
         this.comment = comment;
     }
 
@@ -50,3 +54,4 @@ public class OrderDtoMocked {
         this.id = id;
     }
 }
+

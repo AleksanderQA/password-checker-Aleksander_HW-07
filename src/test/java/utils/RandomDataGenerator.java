@@ -4,6 +4,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class RandomDataGenerator {
 
+
     public static String generateName(){
         int length  = 10;
         boolean useLetters = true;
@@ -26,5 +27,6 @@ public class RandomDataGenerator {
         boolean useNumbers = true;
         String generateComment = RandomStringUtils.random(length,useLetters,useNumbers);
         return generateComment;
+
     }
 }

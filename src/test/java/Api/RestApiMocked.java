@@ -9,11 +9,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import utils.RandomDataGenerator;
 import static io.restassured.RestAssured.*;
+
 import static org.hamcrest.Matchers.*;
 
 
 public class RestApiMocked {
     private  final String API_KEY = "1234567890123456";
+
 
     @BeforeAll
     public static void setup() {
@@ -49,7 +51,9 @@ public class RestApiMocked {
 
                 .log().all()
                 .contentType(ContentType.JSON)
+
                 .header("api_key", API_KEY)
+
                 .when()
                 .delete("/test-orders/10")
                 .then()
@@ -77,7 +81,9 @@ public class RestApiMocked {
         given()
                 .log().all()
                 .when()
+
                 .header("api_key", API_KEY)
+
                 .delete("/test-orders/ ")
                 .then()
                 .log().all()
@@ -104,7 +110,9 @@ public class RestApiMocked {
         given()
                 .log().all()
                 .when()
+
                 .header("api_key", API_KEY)
+
                 .delete("/test-orders/0")
                 .then()
                 .log().all()
@@ -117,7 +125,9 @@ public class RestApiMocked {
         given()
                 .log().all()
                 .when()
+
                 .header("api_key", API_KEY)
+
                 .delete("/test-orders/Q")
                 .then()
                 .log().all()
@@ -154,6 +164,7 @@ public class RestApiMocked {
         Assertions.assertTrue(password.length() >= 8);
         Assertions.assertTrue(password.length() <= 20);
     }
+
 
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3, 4, 5})
@@ -221,14 +232,17 @@ public class RestApiMocked {
         orderDtoMocked.setCustomerName(RandomDataGenerator.generateName());
         orderDtoMocked.setCustomerPhone(RandomDataGenerator.generatePhoneNumber());
         orderDtoMocked.setComment(RandomDataGenerator.generateComment());
+
         orderDtoMocked.setStatus("ACCEPTED");
         orderDtoMocked.setId(9);
         orderDtoMocked.setCourierId(4);
 
 
+
         given()
                 .header("accept", "application/json")
                 .header("api_key", API_KEY)
+
                 .contentType(ContentType.JSON)
                 .log().all()
                 .when()
@@ -237,6 +251,7 @@ public class RestApiMocked {
                 .then()
                 .time(lessThanOrEqualTo(1000L))
                 .log().all()
+
                 .statusCode(HttpStatus.SC_OK);
     }
 
