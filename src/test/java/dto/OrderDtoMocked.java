@@ -1,11 +1,15 @@
 package dto;
- public class OrderDtoMocked {
+
+public class OrderDtoMocked {
+
    private String status;
    private int courierId;
    private String customerName;
    private String customerPhone;
    private String comment;
-   int id;
+   private int id;
+
+
 
     public OrderDtoMocked(String status, int courierId, String customerName, String customerPhone, String comment, int id) {
         this.status = status;
@@ -17,7 +21,9 @@ package dto;
     }
 
 
+
     public  OrderDtoMocked( ) {
+
     }
 
     public void setStatus(String status) {
@@ -36,12 +42,14 @@ package dto;
         this.customerPhone = customerPhone;
     }
 
-    public void setCustomerComment(String comment) {
+    public void setComment(String comment) {
         this.comment = comment;
     }
 
     public void setId(int id) {
         this.id = id;
     }
-
 }
+
+
+

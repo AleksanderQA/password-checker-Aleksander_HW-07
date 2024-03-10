@@ -1,7 +1,6 @@
 package Api;
 import com.google.gson.Gson;
 import dto.OrderDtoMocked;
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.*;
@@ -15,12 +14,11 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 
 public class RestApiMocked {
-    private final String api_key = "1234567890123456";
+    private  final String API_KEY = "1234567890123456";
 
     @BeforeAll
     public static void setup() {
         baseURI = ("http://35.208.34.242:8080");
-
     }
 
     @ParameterizedTest
@@ -52,7 +50,7 @@ public class RestApiMocked {
 
                 .log().all()
                 .contentType(ContentType.JSON)
-                .header("api_key", api_key)
+                .header("api_key", API_KEY)
                 .when()
                 .delete("/test-orders/10")
                 .then()
@@ -80,7 +78,7 @@ public class RestApiMocked {
         given()
                 .log().all()
                 .when()
-                .header("api_key", api_key)
+                .header("api_key", API_KEY)
                 .delete("/test-orders/ ")
                 .then()
                 .log().all()
@@ -107,7 +105,7 @@ public class RestApiMocked {
         given()
                 .log().all()
                 .when()
-                .header("api_key", api_key)
+                .header("api_key", API_KEY)
                 .delete("/test-orders/0")
                 .then()
                 .log().all()
@@ -120,7 +118,7 @@ public class RestApiMocked {
         given()
                 .log().all()
                 .when()
-                .header("api_key", api_key)
+                .header("api_key", API_KEY)
                 .delete("/test-orders/Q")
                 .then()
                 .log().all()
@@ -157,71 +155,81 @@ public class RestApiMocked {
         Assertions.assertTrue(password.length() >= 8);
         Assertions.assertTrue(password.length() <= 20);
     }
-    @Test
-    public void createOrderWithRandomDataAndCheckResponseCodeIsOk(){
 
-            OrderDtoMocked orderDtoMocked = new OrderDtoMocked();
-
-            orderDtoMocked.setCustomerName(RandomDataGenerator.generateRandomName());
-            orderDtoMocked.setCustomerPhone(RandomDataGenerator.generateRandomPhoneNumber());
-            orderDtoMocked.setCustomerComment(RandomDataGenerator.generateRandomComment());
-            orderDtoMocked.setId(6);
-            orderDtoMocked.setCourierId(2);
-            orderDtoMocked.setStatus("OPEN");
-
-            given()
-                    .header("Content-Type", "application/json")
-                    .log().all()
-                    .when()
-                    .body(new Gson().toJson(orderDtoMocked))
-                    .post("/test-orders")
-                    .then()
-                    .time(lessThanOrEqualTo(1000L))
-                    .log().all()
-                    .statusCode(HttpStatus.SC_OK);
-
-    }
     @ParameterizedTest
-    @ValueSource(ints = {1,2,3,4,5,6,7})
-    public void changeOrderFieldNameAndCheckResponseCodeIsOk(){
-            OrderDtoMocked orderDtoMocked1 = new OrderDtoMocked("ACCEPTED", 3, "James", "12345678", "comment", 5);
-
-            orderDtoMocked1.setCustomerName(RandomDataGenerator.generateRandomName());
-            orderDtoMocked1.setCustomerPhone(RandomDataGenerator.generateRandomPhoneNumber());
-            orderDtoMocked1.setCustomerComment(RandomDataGenerator.generateRandomName());
-            orderDtoMocked1.setId(4);
-            orderDtoMocked1.setCourierId(8);
-            orderDtoMocked1.setStatus("DELIVERED");
-
-            given()
-                    .header("Content-Type", "application/json")
-                    .log().all()
-                    .when()
-                    .body(new Gson().toJson(orderDtoMocked1))
-                    .post("/test-orders")
-                    .then()
-                    .time(lessThanOrEqualTo(1000L))
-                    .log().all()
-                    .statusCode(HttpStatus.SC_OK);
-
-    }
-    @ParameterizedTest
-    @ValueSource(ints = {1,2,3,4,5})
-    public void changeOrderFieldNameByUsingMethodPutAndStatusShouldBeOk(int OrderId){
+    @ValueSource(ints = {1, 2, 3, 4, 5})
+    public void createOrderWithRandomDataAndCheckResponseCodeIsOk() {
 
         OrderDtoMocked orderDtoMocked = new OrderDtoMocked();
 
         orderDtoMocked.setCustomerName(RandomDataGenerator.generateRandomName());
         orderDtoMocked.setCustomerPhone(RandomDataGenerator.generateRandomPhoneNumber());
-        orderDtoMocked.setCustomerComment(RandomDataGenerator.generateRandomComment());
+        orderDtoMocked.setComment(RandomDataGenerator.generateRandomComment());
+        orderDtoMocked.setId(6);
+        orderDtoMocked.setCourierId(2);
+        orderDtoMocked.setStatus("OPEN");
+
+        String response = given()
+                .header("Content-Type", "application/json")
+                .log().all()
+                .when()
+                .body(new Gson().toJson(orderDtoMocked))
+                .post("/test-orders")
+                .then()
+                .time(lessThanOrEqualTo(1000L))
+                .log().all()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .path("status");
+
+        Assertions.assertTrue(response.contains("OPEN"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5})
+    public void changeOrderFieldNameAndCheckResponseCodeIsOk() {
+        OrderDtoMocked orderDtoMocked = new OrderDtoMocked("ACCEPTED", 3, "James", "12345678", "comment", 5);
+
+        orderDtoMocked.setCustomerName(RandomDataGenerator.generateRandomName());
+        orderDtoMocked.setCustomerPhone(RandomDataGenerator.generateRandomPhoneNumber());
+        orderDtoMocked.setComment(RandomDataGenerator.generateRandomName());
+        orderDtoMocked.setId(4);
+        orderDtoMocked.setCourierId(8);
+        orderDtoMocked.setStatus("DELIVERED");
+
+        String response = given()
+                .header("Content-Type", "application/json")
+                .log().all()
+                .when()
+                .body(new Gson().toJson(orderDtoMocked))
+                .post("/test-orders")
+                .then()
+                .time(lessThanOrEqualTo(1000L))
+                .log().all()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .asString();
+
+        Assertions.assertTrue(response.contains("DELIVERED"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3, 4, 5})
+    public void changeOrderFieldNameByUsingMethodPutAndStatusShouldBeOk(int OrderId) {
+
+        OrderDtoMocked orderDtoMocked = new OrderDtoMocked();
+
+        orderDtoMocked.setCustomerName(RandomDataGenerator.generateRandomName());
+        orderDtoMocked.setCustomerPhone(RandomDataGenerator.generateRandomPhoneNumber());
+        orderDtoMocked.setComment(RandomDataGenerator.generateRandomComment());
         orderDtoMocked.setStatus("ACCEPTED");
         orderDtoMocked.setId(9);
         orderDtoMocked.setCourierId(4);
 
-        String response =
+
         given()
                 .header("accept", "application/json")
-                .header("api_key", api_key)
+                .header("api_key", API_KEY)
                 .contentType(ContentType.JSON)
                 .log().all()
                 .when()
@@ -230,30 +238,29 @@ public class RestApiMocked {
                 .then()
                 .time(lessThanOrEqualTo(1000L))
                 .log().all()
-                .statusCode(HttpStatus.SC_OK)
-                .extract()
-                .path("status");
+                .statusCode(HttpStatus.SC_OK);
     }
+
     @ParameterizedTest
-    @ValueSource(ints = {1,2,3,4,5})
-    public void changeOrderFieldNamesByUsingPutMethodAndStatusCodeShouldBeOk(int OrderID){
+    @ValueSource(ints = {1, 2, 3, 4, 5})
+    public void changeOrderFieldNamesByUsingPutMethodAndStatusCodeShouldBeOk(int OrderID) {
 
-        OrderDtoMocked orderDtoMocked1 = new OrderDtoMocked("DELIVERED",5,"James", "12345678", "comment",5);
+        OrderDtoMocked orderDtoMocked = new OrderDtoMocked("DELIVERED", 5, "James", "12345678", "comment", 5);
 
-        orderDtoMocked1.setCustomerName(RandomDataGenerator.generateRandomName());
-        orderDtoMocked1.setCustomerPhone(RandomDataGenerator.generateRandomPhoneNumber());
-        orderDtoMocked1.setCustomerComment(RandomDataGenerator.generateRandomComment());
-        orderDtoMocked1.setId(5);
-        orderDtoMocked1.setStatus("ACCEPTED");
-        orderDtoMocked1.setCourierId(8);
+        orderDtoMocked.setCustomerName(RandomDataGenerator.generateRandomName());
+        orderDtoMocked.setCustomerPhone(RandomDataGenerator.generateRandomPhoneNumber());
+        orderDtoMocked.setComment(RandomDataGenerator.generateRandomComment());
+        orderDtoMocked.setId(5);
+        orderDtoMocked.setStatus("ACCEPTED");
+        orderDtoMocked.setCourierId(8);
 
         given()
                 .header("accept", "application/json")
-                .header("api_key", api_key)
+                .header("api_key", API_KEY)
                 .contentType((ContentType.JSON))
                 .log().all()
                 .when()
-                .body(new Gson().toJson(orderDtoMocked1))
+                .body(new Gson().toJson(orderDtoMocked))
                 .put("/test-orders/{OrderID}", OrderID)
                 .then()
                 .time(lessThan(1000L))
